@@ -55,7 +55,7 @@
 	<div class="spinning">{{ _('Loading view…') }}</div>
 	<script>
 		L.require('ui').then(function(ui) {
-			ui.instantiateView('rect.sysauth');
+			ui.instantiateView('afury.sysauth');
 		});
 	</script>
 </div>
