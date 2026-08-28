@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Linear 样例 — Afury</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #08090a;
+			--bg-2: #0f1011;
+			--surface: #141516;
+			--ink: #f7f8f8;
+			--muted: #8a8f98;
+			--line: #23252a;
+			--accent: #5e6ad2;
+			--ok: #4cb782;
+		}
+		* { box-sizing: border-box; }
+		html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font-family: Inter, ui-sans-serif, sans-serif; }
+		body { display: flex; min-height: 100vh; }
+		a { color: inherit; text-decoration: none; }
+		aside {
+			width: 232px;
+			flex: none;
+			padding: 20px 14px;
+			border-right: 1px solid var(--line);
+			background: var(--bg-2);
+			display: flex;
+			flex-direction: column;
+		}
+		.brand { display: flex; flex-direction: column; gap: 2px; padding: 4px 8px 20px; }
+		.brand strong { font-size: 15px; font-weight: 600; letter-spacing: -0.03em; }
+		.brand span { font-size: 12px; color: var(--muted); }
+		nav a {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 7px 8px;
+			border-radius: 6px;
+			font-size: 13px;
+			color: var(--muted);
+		}
+		nav a.active { background: #1c1d1f; color: var(--ink); }
+		nav a:hover { color: var(--ink); }
+		nav .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+		.aside-foot { margin-top: auto; padding: 12px 8px 4px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+		main { flex: 1; min-width: 0; padding: 22px 32px 48px; }
+		.crumb { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+		.crumb kbd {
+			margin-left: auto;
+			border: 1px solid var(--line);
+			border-radius: 6px;
+			padding: 4px 8px;
+			font: 500 12px Inter, sans-serif;
+			color: var(--muted);
+		}
+		h1 { margin: 0 0 6px; font-size: 22px; font-weight: 600; letter-spacing: -0.04em; }
+		.lede { margin: 0 0 28px; color: var(--muted); font-size: 13px; }
+		.panel {
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			overflow: hidden;
+			margin-bottom: 16px;
+		}
+		.panel h2 {
+			margin: 0;
+			padding: 12px 16px;
+			font-size: 12px;
+			font-weight: 500;
+			color: var(--muted);
+			border-bottom: 1px solid var(--line);
+		}
+		.row {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 16px;
+			padding: 11px 16px;
+			border-bottom: 1px solid var(--line);
+			font-size: 13px;
+		}
+		.row:last-child { border-bottom: 0; }
+		.row .k { color: var(--muted); }
+		.row .v { color: var(--ink); font-weight: 500; }
+		.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+		.meter { height: 3px; background: #22242a; border-radius: 99px; margin-top: 8px; overflow: hidden; }
+		.meter > i { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+		.ok { color: var(--ok); }
+		.note {
+			position: fixed;
+			right: 20px;
+			bottom: 20px;
+			z-index: 2;
+			display: flex;
+			gap: 10px;
+			align-items: center;
+			padding: 8px 10px 8px 12px;
+			border: 1px solid var(--line);
+			border-radius: 8px;
+			background: var(--bg-2);
+			font-size: 12px;
+			color: var(--muted);
+		}
+		.note a { color: var(--ink); border-bottom: 1px solid var(--line); }
+		@media (max-width: 800px) {
+			aside { display: none; }
+			.grid { grid-template-columns: 1fr; }
+			main { padding: 20px 16px 80px; }
+		}
+	</style>
+</head>
+<body>
+	<aside>
+		<div class="brand">
+			<strong>Afury</strong>
+			<span>h5000m-wwand</span>
+		</div>
+		<nav>
+			<a class="active" href="linear-sample.html">概览<span class="dot"></span></a>
+			<a href="linear-sample.html">系统</a>
+			<a href="linear-sample.html">网络</a>
+			<a href="linear-sample.html">模组</a>
+		</nav>
+		<div class="aside-foot">样例 · Linear 语言</div>
+	</aside>
+	<main>
+		<div class="crumb">
+			<span>状态</span>
+			<span>/</span>
+			<span>概览</span>
+			<kbd>⌘K</kbd>
+		</div>
+		<h1>Overview</h1>
+		<p class="lede">设备在线 · 运行 3 天 14 小时 · 没有待应用的更改</p>
+		<section class="panel">
+			<h2>系统</h2>
+			<div class="row"><span class="k">主机名</span><span class="v">h5000m-wwand</span></div>
+			<div class="row"><span class="k">型号</span><span class="v">H5000M</span></div>
+			<div class="row"><span class="k">架构</span><span class="v">ARMv8 Processor</span></div>
+			<div class="row"><span class="k">固件</span><span class="v">OpenWrt 25.12</span></div>
+			<div class="row"><span class="k">运行时间</span><span class="v ok">3d 14h 22m</span></div>
+		</section>
+		<div class="grid">
+			<section class="panel">
+				<h2>内存</h2>
+				<div class="row">
+					<span class="k">已使用</span>
+					<span class="v">1.73 / 1.94 GiB</span>
+				</div>
+				<div class="row">
+					<span class="k" style="width:100%">
+						88%
+						<div class="meter"><i style="width:88%"></i></div>
+					</span>
+				</div>
+			</section>
+			<section class="panel">
+				<h2>存储</h2>
+				<div class="row">
+					<span class="k">磁盘</span>
+					<span class="v">1.82 / 7.21 GiB</span>
+				</div>
+				<div class="row">
+					<span class="k" style="width:100%">
+						25%
+						<div class="meter"><i style="width:25%"></i></div>
+					</span>
+				</div>
+			</section>
+		</div>
+	</main>
+	<div class="note">
+		这是 Linear 的皮肤语言，不是 Afury。
+		<a href="samples.html">对照</a>
+		<a href="vercel-sample.html">Vercel</a>
+		<a href="https://linear.app" target="_blank" rel="noreferrer">linear.app</a>
+	</div>
+</body>
+</html>

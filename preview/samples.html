@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Linear / Vercel 样例</title>
+	<style>
+		* { box-sizing: border-box; }
+		html, body { margin: 0; min-height: 100%; background: #111; color: #f2f2f2; font-family: ui-sans-serif, system-ui, sans-serif; }
+		body { max-width: 720px; margin: 0 auto; padding: 48px 24px 64px; }
+		h1 { font-size: 28px; letter-spacing: -0.04em; margin: 0 0 8px; }
+		p { color: #a3a3a3; line-height: 1.55; }
+		.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 28px 0; }
+		a.card {
+			display: block;
+			padding: 22px 20px;
+			border-radius: 10px;
+			text-decoration: none;
+			color: inherit;
+			min-height: 140px;
+		}
+		a.linear { background: #08090a; border: 1px solid #23252a; }
+		a.vercel { background: #fff; color: #000; border: 1px solid #eaeaea; }
+		a.card strong { display: block; font-size: 18px; letter-spacing: -0.03em; margin-bottom: 8px; }
+		a.card span { display: block; font-size: 13px; opacity: 0.65; line-height: 1.45; }
+		.official { font-size: 13px; }
+		.official a { color: #fff; }
+		@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+	</style>
+</head>
+<body>
+	<h1>两种「软件圈高级」</h1>
+	<p>同一套 H5000M 概览数据，两套皮肤。用来看 Linear 和 Vercel 到底长什么样，不是 Afury 主题。</p>
+	<div class="grid">
+		<a class="card linear" href="linear-sample.html">
+			<strong>Linear</strong>
+			<span>近黑、细线、薰衣草蓝、几乎没阴影。开发者工具的克制。</span>
+		</a>
+		<a class="card vercel" href="vercel-sample.html">
+			<strong>Vercel</strong>
+			<span>白底、黑字、Geist、黑按钮。文档站和部署台的高对比。</span>
+		</a>
+	</div>
+	<p class="official">
+		原站：
+		<a href="https://linear.app" target="_blank" rel="noreferrer">linear.app</a>
+		·
+		<a href="https://vercel.com" target="_blank" rel="noreferrer">vercel.com</a>
+	</p>
+</body>
+</html>

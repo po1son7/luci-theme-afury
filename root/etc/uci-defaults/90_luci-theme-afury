@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# After bootstrap's 30_. Always own the default on this image.
+uci -q delete luci.themes.Rect || true
+uci -q delete luci.themes.RectDark || true
+uci -q delete luci.themes.RectLight || true
+uci -q delete luci.themes.Argon || true
+uci -q delete luci.themes.ArgonDark || true
+uci -q set luci.themes.Afury='/luci-static/afury'
+uci -q set luci.themes.AfuryDark='/luci-static/afury-dark'
+uci -q set luci.themes.AfuryLight='/luci-static/afury-light'
+uci -q set luci.main.mediaurlbase='/luci-static/afury'
+uci commit luci
+
+exit 0

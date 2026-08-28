@@ -1,0 +1,508 @@
+{#
+	Afury — LuCI chrome
+	Layout contract from luci-theme-bootstrap (OpenWrt 25.12), Apache-2.0
+-#}
+
+{%
+	import { getuid, getspnam } from 'luci.core';
+
+	const boardinfo = ubus.call('system', 'board');
+	const darkpref = (theme == 'afury-dark' ? 'true' : (theme == 'afury-light' ? 'false' : null));
+
+	http.prepare_content('text/html; charset=UTF-8');
+-%}
+
+<!DOCTYPE html>
+<html lang="{{ dispatcher.lang }}" {{ darkpref ? `data-darkmode="${darkpref}"` : '' }}>
+	<head>
+		<meta charset="utf-8">
+		<title>{{ striptags(`${boardinfo.hostname ?? '?'}${dispatched?.title ? ` | ${_(dispatched.title)}` : ''}`) }}</title>
+		<script>
+			(function () {
+				var root = document.documentElement,
+				    key = 'afury-darkmode';
+				try {
+					var stored = localStorage.getItem(key);
+					if (stored === '1' || stored === '0') {
+						root.setAttribute('data-darkmode', stored === '1' ? 'true' : 'false');
+						return;
+					}
+				} catch (e) {}
+				if (!root.hasAttribute('data-darkmode')) {
+					var mq = window.matchMedia('(prefers-color-scheme: dark)'),
+					    apply = function (m) { root.setAttribute('data-darkmode', m.matches ? 'true' : 'false'); };
+					mq.addEventListener('change', apply);
+					apply(mq);
+				}
+			})();
+			document.addEventListener('keydown', function (ev) {
+				if (ev.key !== 'Enter')
+					return;
+				var field = ev.target;
+				if (!field || !field.closest || field.closest('.rect-mode-toggle'))
+					return;
+				var form = field.closest('.modal.login form') || field.closest('form.cbi-map');
+				if (!form || !document.querySelector('.modal.login'))
+					return;
+				ev.preventDefault();
+				ev.stopImmediatePropagation();
+				if (typeof form.requestSubmit === 'function')
+					form.requestSubmit();
+				else
+					form.submit();
+			}, true);
+			document.addEventListener('click', function (ev) {
+				var t = ev.target.closest && ev.target.closest('.rect-mode-toggle');
+				if (!t)
+					return;
+				ev.preventDefault();
+				ev.stopImmediatePropagation();
+				var field = document.activeElement;
+				if (ev.detail === 0 && field && field.closest && field.closest('form')) {
+					var form = field.closest('form');
+					if (typeof form.requestSubmit === 'function')
+						form.requestSubmit();
+					else
+						form.submit();
+					return;
+				}
+				var next = document.documentElement.getAttribute('data-darkmode') !== 'true';
+				document.documentElement.setAttribute('data-darkmode', next ? 'true' : 'false');
+				try { localStorage.setItem('afury-darkmode', next ? '1' : '0'); } catch (e) {}
+				t.setAttribute('aria-label', next ? '切换为浅色' : '切换为深色');
+			}, true);
+			(function () {
+				var mark = '<svg class="brand-logo" viewBox="0 0 112 36" fill="none" role="img" aria-label="Afury" width="112" height="36"><title>Afury</title><g fill="currentColor"><path fill-rule="evenodd" d="M14.8 2.5 1 26h4.2l2.35-5.6h10.9L20.8 26h4.2L14.8 2.5Zm0 6.2 3.85 9.15h-7.7L14.8 8.7Z"/><path d="M32.4 26V9c0-3.7 2.15-5.95 5.9-5.95H45.6V5.8h-6.55c-1.9 0-3.05 1.15-3.05 3.35v4.05h7.35v2.45H36V26h-3.6Z"/><path d="M49.2 11.45h3.25v8.2c0 2.75 1.3 4.35 3.95 4.35s3.95-1.6 3.95-4.35v-8.2h3.25v8.35c0 4.55-2.7 7.2-7.2 7.2s-7.2-2.65-7.2-7.2v-8.35Z"/><path d="M70.2 11.45h3.25v1.95c.95-1.45 2.3-2.2 4.05-2.2v3.05c-.28-.05-.58-.08-.88-.08-1.9 0-3.17 1.2-3.17 3.55V26H70.2V11.45Z"/><path d="M85.15 11.45h3.4l4.75 8.15 4.75-8.15h3.45L95.3 22.4V33.6h-3.3V22.4l-6.85-10.95Z"/></g><rect fill="#0496D4" x="8.2" y="15.55" width="13.2" height="3.15" rx="1.55"/></svg>';
+				function swap() {
+					document.querySelectorAll('img.brand-logo').forEach(function (img) {
+						var host = document.createElement('div');
+						host.innerHTML = mark;
+						img.replaceWith(host.firstElementChild);
+					});
+				}
+				document.addEventListener('DOMContentLoaded', swap);
+				new MutationObserver(swap).observe(document.documentElement, { childList: true, subtree: true });
+			})();
+			document.addEventListener('DOMContentLoaded', function () {
+				var page = (document.body && document.body.getAttribute('data-page')) || '';
+				if (page.indexOf('sysauth') !== -1)
+					return;
+				var tries = 0;
+				var collapsed = false;
+				var timer = setInterval(function () {
+					tries += 1;
+					if (!collapsed && document.querySelector('#topmenu > li')) {
+						document.querySelectorAll('#topmenu > li.dropdown.open').forEach(function (li) {
+							li.classList.remove('open');
+						});
+						collapsed = true;
+					}
+					var chromeOk = window.rectPageChrome();
+					var heroOk = window.rectBuildOverviewHero();
+					window.rectRewriteIcons();
+					window.rectFixWwandBandExtras();
+					if ((chromeOk && heroOk) || tries > 40) {
+						clearInterval(timer);
+						if (document.getElementById('rect-hero'))
+							setInterval(function () { window.rectBuildOverviewHero(true); }, 2000);
+					}
+				}, 250);
+			});
+			window.rectPageChrome = function () {
+				var page = (document.body && document.body.getAttribute('data-page')) || '';
+				if (page.indexOf('sysauth') !== -1)
+					return true;
+				if (page === '' || page === 'admin-status-overview')
+					return true;
+				var view = document.getElementById('view');
+				var h2 = document.querySelector('#maincontent > h2, #view > h2, .cbi-map > h2');
+				if (!h2)
+					h2 = document.querySelector('#view h2, .cbi-map h2, .h5m-page h2, .qst-page h2, .fan-page h2, .wifi-page h2');
+				if (!h2 && view && !view.querySelector(':scope > .spinning')) {
+					var titleText = (document.title.split('|').pop() || '').trim();
+					if (titleText) {
+						h2 = document.createElement('h2');
+						h2.textContent = titleText;
+						view.insertBefore(h2, view.firstChild);
+					}
+				}
+				if (!h2)
+					return false;
+				if (document.querySelector('.rect-kicker'))
+					return true;
+				var src = document.querySelector('#topmenu > li.active > a, #topmenu > li.dropdown.active > a');
+				var text = src ? src.textContent.replace(/\s+/g, ' ').trim() : '';
+				if (!text)
+					return false;
+				var kicker = document.createElement('p');
+				kicker.className = 'rect-kicker';
+				kicker.textContent = text;
+				h2.before(kicker);
+				return true;
+			};
+			window.rectRewriteIcons = function () {
+				var page = (document.body && document.body.getAttribute('data-page')) || '';
+				if (page.indexOf('sysauth') !== -1 || page.indexOf('modem') !== -1)
+					return;
+				document.querySelectorAll('img[src*="/luci-static/resources/icons/"]').forEach(function (img) {
+					if (img.dataset.rectIcon)
+						return;
+					if (img.closest('.h5m-page, .fan-page, .wifi-page, .qst-page'))
+						return;
+					var name = (img.getAttribute('src') || '').split('?')[0].split('/').pop();
+					if (!name)
+						return;
+					img.src = '{{ media }}/icons/' + name;
+					img.dataset.rectIcon = '1';
+					img.classList.add('rect-icon');
+				});
+			};
+			window.rectFixWwandBandExtras = function () {
+				var page = (document.body && document.body.getAttribute('data-page')) || '';
+				if (page !== 'admin-network-wwand-tools')
+					return;
+				document.querySelectorAll('input.cbi-input-text').forEach(function (inp) {
+					var ph = inp.placeholder || '';
+					if (ph.indexOf('额外频段') < 0 && ph.indexOf('non-listed') < 0)
+						return;
+					if (inp.dataset.rectBandGrouped === '1')
+						return;
+					var host = inp.parentElement;
+					if (!host)
+						return;
+					var grid = host.firstElementChild;
+					var link = inp.nextElementSibling;
+					function extraBlock() {
+						var block = host.querySelector('.wwand-band-extra');
+						if (block)
+							return block;
+						block = document.createElement('div');
+						block.className = 'wwand-band-extra';
+						var cap = document.createElement('div');
+						cap.className = 'wwand-band-extra-cap';
+						cap.textContent = '列表外频段';
+						var chips = document.createElement('div');
+						chips.className = 'wwand-band-extra-chips';
+						block.appendChild(cap);
+						block.appendChild(chips);
+						host.insertBefore(block, inp);
+						return block;
+					}
+					function syncValue() {
+						var nums = [];
+						host.querySelectorAll('.wwand-band-extra-chip input').forEach(function (x) {
+							if (x.checked)
+								nums.push(x.getAttribute('data-band'));
+						});
+						inp.value = nums.join(',');
+					}
+					var existing = host.querySelectorAll('.wwand-band-extra-chip');
+					var raw = (inp.value || '').trim();
+					var nums = raw.split(/[,\s]+/).map(function (tok) {
+						return parseInt(tok, 10);
+					}).filter(function (n) { return n; });
+					if (existing.length || nums.length) {
+						var block = extraBlock();
+						var chips = block.querySelector('.wwand-band-extra-chips');
+						existing.forEach(function (lab) {
+							chips.appendChild(lab);
+						});
+						var row = inp.closest('.cbi-value');
+						var title = row && row.querySelector('.cbi-value-title');
+						var prefix = /NR|SA|NSA|5G/i.test((title && title.textContent) || '') ? 'n' : 'B';
+						nums.forEach(function (n) {
+							if (chips.querySelector('input[data-band="' + n + '"]'))
+								return;
+							var lab = document.createElement('label');
+							lab.className = 'wwand-band-extra-chip';
+							var cb = document.createElement('input');
+							cb.type = 'checkbox';
+							cb.checked = true;
+							cb.setAttribute('data-band', String(n));
+							cb.addEventListener('change', syncValue);
+							lab.appendChild(cb);
+							lab.appendChild(document.createTextNode(' ' + prefix + n));
+							chips.appendChild(lab);
+						});
+						syncValue();
+						inp.style.display = 'none';
+					}
+					if (link && link.tagName === 'A') {
+						link.style.display = 'inline-block';
+						if (!link.dataset.rectBandBound) {
+							link.dataset.rectBandBound = '1';
+							link.addEventListener('click', function () {
+								extraBlock();
+								inp.style.display = '';
+								inp.focus();
+							});
+						}
+					}
+					inp.dataset.rectBandGrouped = '1';
+				});
+			};
+			window.rectFixWwandToolsSections = function () {
+				var page = (document.body && document.body.getAttribute('data-page')) || '';
+				if (page !== 'admin-network-wwand-tools')
+					return;
+				var root = document.querySelector('#view > div');
+				if (!root || !root.querySelector('h3'))
+					return;
+				var first = root.querySelector(':scope > .cbi-section');
+				var actions = root.querySelector(':scope > .cbi-page-actions');
+				if (first && !first.classList.contains('wwand-tools-card')) {
+					first.classList.add('wwand-tools-card');
+					if (actions)
+						first.appendChild(actions);
+				}
+				var kids = Array.prototype.slice.call(root.children);
+				for (var i = 0; i < kids.length; i++) {
+					var el = kids[i];
+					if (el.classList.contains('wwand-tools-card'))
+						continue;
+					var ownHead = el.matches('h3, h4');
+					var wrapHead = el.matches('div')
+						&& !el.classList.contains('cbi-section')
+						&& !el.classList.contains('cbi-page-actions')
+						&& el.querySelector(':scope > h3, :scope > h4');
+					if (!ownHead && !wrapHead)
+						continue;
+					if (wrapHead) {
+						el.classList.add('cbi-section', 'wwand-tools-card');
+						continue;
+					}
+					var wrap = document.createElement('div');
+					wrap.className = 'cbi-section wwand-tools-card';
+					root.insertBefore(wrap, el);
+					wrap.appendChild(el);
+					var next = wrap.nextElementSibling;
+					while (next) {
+						if (next.matches('h3, h4'))
+							break;
+						if (next.matches('div')
+							&& !next.classList.contains('cbi-section')
+							&& !next.classList.contains('cbi-page-actions')
+							&& !next.classList.contains('wwand-tools-card')
+							&& next.querySelector(':scope > h3, :scope > h4'))
+							break;
+						var move = next;
+						next = next.nextElementSibling;
+						wrap.appendChild(move);
+					}
+					kids = Array.prototype.slice.call(root.children);
+					i = kids.indexOf(wrap);
+				}
+			};
+			new MutationObserver(function () {
+				if (window.rectRewriteIcons)
+					window.rectRewriteIcons();
+				if (window.rectFixWwandBandExtras)
+					window.rectFixWwandBandExtras();
+				if (window.rectFixWwandToolsSections)
+					window.rectFixWwandToolsSections();
+			}).observe(document.documentElement, { childList: true, subtree: true });
+			window.rectBuildOverviewHero = function (refreshOnly) {
+				var page = (document.body && document.body.getAttribute('data-page')) || '';
+				if (page.indexOf('sysauth') !== -1)
+					return true;
+				if (page && page !== 'admin-status-overview')
+					return true;
+				var cells = document.querySelectorAll('#view td[width="33%"], #view .td[width="33%"]');
+				if (!cells.length)
+					return false;
+				function cellFor(label) {
+					for (var i = 0; i < cells.length; i++) {
+						var key = (cells[i].textContent || '').replace(/\s+/g, '');
+						if (key.indexOf(label) !== -1)
+							return cells[i].nextElementSibling;
+					}
+					return null;
+				}
+				function textOf(node) {
+					if (!node)
+						return '';
+					var bar = node.querySelector && node.querySelector('.cbi-progressbar');
+					var title = bar && (bar.title || bar.getAttribute('title'));
+					if (title)
+						return title.replace(/\s+/g, ' ').trim();
+					return (node.textContent || '').replace(/\s+/g, ' ').trim();
+				}
+				function parseBar(raw) {
+					var m = (raw || '').match(/\((\d+)%\)/);
+					return {
+						pct: m ? parseInt(m[1], 10) : null,
+						detail: (raw || '').replace(/\s*\(\d+%\)$/, '').trim()
+					};
+				}
+				var upRaw = textOf(cellFor('运行时间')) || textOf(cellFor('Uptime'));
+				var up = upRaw.replace(/\s*\d+\s*s\s*$/i, '').trim() || (upRaw ? '<1m' : '');
+				var avail = parseBar(textOf(cellFor('可用数')) || textOf(cellFor('Available')));
+				var used = parseBar(textOf(cellFor('已使用')) || textOf(cellFor('Used')));
+				var usedPct = (avail.pct != null) ? (100 - avail.pct) : used.pct;
+				var mem = {
+					n: usedPct != null ? usedPct + '%' : '—',
+					s: avail.detail ? ('可用 ' + avail.detail) : (used.detail || ''),
+					bar: usedPct
+				};
+				var diskRaw = parseBar(textOf(cellFor('磁盘空间')) || textOf(cellFor('Root')));
+				var disk = {
+					n: diskRaw.pct != null ? diskRaw.pct + '%' : (diskRaw.detail || '—'),
+					s: diskRaw.detail ? ('已用 ' + diskRaw.detail) : '',
+					bar: diskRaw.pct
+				};
+				if (!up && mem.n === '—' && disk.n === '—')
+					return false;
+				var view = document.querySelector('#view');
+				if (!view)
+					return false;
+				var hero = document.getElementById('rect-hero');
+				if (!hero) {
+					hero = document.createElement('div');
+					hero.id = 'rect-hero';
+					hero.className = 'rect-hero';
+					hero.innerHTML = '<div class="rect-hero-item"><div class="rect-hero-l">运行时间</div><div class="rect-hero-n" data-k="up"></div><div class="rect-hero-s">设备在线</div></div>' +
+						'<div class="rect-hero-item"><div class="rect-hero-l">内存占用</div><div class="rect-hero-n" data-k="mem"></div><div class="rect-hero-s" data-k="mems"></div><div class="rect-hero-bar" data-k="membar" hidden><i></i></div></div>' +
+						'<div class="rect-hero-item"><div class="rect-hero-l">存储占用</div><div class="rect-hero-n" data-k="disk"></div><div class="rect-hero-s" data-k="disks"></div><div class="rect-hero-bar" data-k="diskbar" hidden><i></i></div></div>';
+					var h2 = document.querySelector('#maincontent > h2, #view > h2');
+					if (h2 && !document.querySelector('.rect-kicker')) {
+						var kicker = document.createElement('p');
+						kicker.className = 'rect-kicker';
+						kicker.textContent = '设备';
+						h2.before(kicker);
+					}
+					if (h2 && h2.parentElement === view)
+						h2.after(hero);
+					else
+						view.insertBefore(hero, view.firstChild);
+				}
+				function setBar(key, pct) {
+					var el = hero.querySelector('[data-k="' + key + '"]');
+					if (!el)
+						return;
+					if (pct == null) {
+						el.hidden = true;
+						return;
+					}
+					el.hidden = false;
+					el.querySelector('i').style.width = pct + '%';
+				}
+				hero.querySelector('[data-k="up"]').textContent = up || '—';
+				hero.querySelector('[data-k="mem"]').textContent = mem.n;
+				hero.querySelector('[data-k="mems"]').textContent = mem.s;
+				hero.querySelector('[data-k="disk"]').textContent = disk.n;
+				hero.querySelector('[data-k="disks"]').textContent = disk.s;
+				setBar('membar', mem.bar);
+				setBar('diskbar', disk.bar);
+				if (refreshOnly)
+					return true;
+				var order = ['系统', '端口状态', '网络'];
+				var ranked = [];
+				var rest = [];
+				[].forEach.call(view.querySelectorAll(':scope > .cbi-section'), function (sec) {
+					var h = sec.querySelector('h3');
+					var title = h ? h.textContent.replace(/隐藏/g, '').replace(/\s+/g, ' ').trim() : '';
+					if (title === '内存' || title === '存储' || title === 'Memory' || title === 'Storage') {
+						sec.classList.add('rect-hero-source');
+						sec.hidden = true;
+						return;
+					}
+					var idx = order.indexOf(title);
+					if (idx !== -1)
+						ranked[idx] = sec;
+					else
+						rest.push(sec);
+				});
+				var after = hero;
+				order.forEach(function (_, i) {
+					if (ranked[i]) {
+						after.after(ranked[i]);
+						after = ranked[i];
+					}
+				});
+				rest.forEach(function (sec) {
+					after.after(sec);
+					after = sec;
+				});
+				return true;
+			};
+		</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="darkreader-lock">
+		<meta name="theme-color" content="#000000">
+		<link rel="preload" href="{{ media }}/fonts/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin>
+		<link rel="stylesheet" href="{{ media }}/cascade.css">
+		<link rel="stylesheet" href="{{ media }}/tokens.css?v=wm57">
+		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm57">
+		<link rel="stylesheet" media="only screen and (max-width: 854px)" href="{{ media }}/mobile.css?v=wm57">
+		<link rel="icon" href="{{ media }}/favicon.svg?v=wm2" sizes="any" type="image/svg+xml">
+		<link rel="icon" href="{{ media }}/favicon.svg?v=wm2" sizes="48x48" type="image/svg+xml">
+		{% if (node?.css): %}
+		<link rel="stylesheet" href="{{ resource }}/{{ node.css }}">
+		{% endif %}
+		{% if (css): %}
+		<style title="text/css">{{ css }}</style>
+		{% endif %}
+		<script src="{{ dispatcher.build_url('admin/translations', dispatcher.lang) }}"></script>
+		<script src="{{ resource }}/cbi.js"></script>
+	</head>
+
+	<body class="lang_{{ dispatcher.lang }} {{ entityencode(striptags(node?.title ?? ''), true) }}" data-page="{{ blank_page ? 'sysauth' : entityencode(join('-', ctx.request_path), true) }}">
+		{% if (!blank_page): %}
+		<header>
+			<div class="header-inner">
+				<a class="brand" href="/">
+					<svg class="brand-logo" viewBox="0 0 112 36" fill="none" role="img" aria-label="Afury" width="112" height="36">
+						<title>Afury</title>
+						<g fill="currentColor">
+							<path fill-rule="evenodd" d="M14.8 2.5 1 26h4.2l2.35-5.6h10.9L20.8 26h4.2L14.8 2.5Zm0 6.2 3.85 9.15h-7.7L14.8 8.7Z"/>
+							<path d="M32.4 26V9c0-3.7 2.15-5.95 5.9-5.95H45.6V5.8h-6.55c-1.9 0-3.05 1.15-3.05 3.35v4.05h7.35v2.45H36V26h-3.6Z"/>
+							<path d="M49.2 11.45h3.25v8.2c0 2.75 1.3 4.35 3.95 4.35s3.95-1.6 3.95-4.35v-8.2h3.25v8.35c0 4.55-2.7 7.2-7.2 7.2s-7.2-2.65-7.2-7.2v-8.35Z"/>
+							<path d="M70.2 11.45h3.25v1.95c.95-1.45 2.3-2.2 4.05-2.2v3.05c-.28-.05-.58-.08-.88-.08-1.9 0-3.17 1.2-3.17 3.55V26H70.2V11.45Z"/>
+							<path d="M85.15 11.45h3.4l4.75 8.15 4.75-8.15h3.45L95.3 22.4V33.6h-3.3V22.4l-6.85-10.95Z"/>
+						</g>
+						<rect fill="#0496D4" x="8.2" y="15.55" width="13.2" height="3.15" rx="1.55"/>
+					</svg>
+				</a>
+				<ul class="nav" id="topmenu" style="display:none"></ul>
+				<div class="header-end">
+					<span class="brand-host">{{ striptags(boardinfo.hostname ?? '?') }}</span>
+					<div id="indicators" class="pull-right">
+						<button type="button" class="rect-mode-toggle" data-rect-dark="1" aria-label="切换外观">
+							<svg class="rect-mode-moon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a6.2 6.2 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+							<svg class="rect-mode-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+						</button>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div id="maincontent" class="container">
+			{% if (getuid() == 0 && getspnam('root')?.pwdp === ''): %}
+				<div class="alert-message warning">
+					<h4>{{ _('No password set!') }}</h4>
+					<p>{{ _('There is no password set on this router. Please configure a root password to protect the web interface.') }}</p>
+					{% if (dispatcher.lookup("admin/system/admin")): %}
+					  <div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/admin") }}">{{ _('Go to password configuration...') }}</a></div>
+					{% endif %}
+				</div>
+			{% endif %}
+
+			{% if (boardinfo.rootfs_type == "initramfs"): %}
+				<div class="alert-message warning">
+					<h4>{{ _('System running in recovery (initramfs) mode.') }}</h4>
+					<p>{{ _('No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade') }}</p>
+					{% if (dispatcher.lookup("admin/system/flash")): %}
+					  <div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/flash") }}">{{ _('Go to firmware upgrade...') }}</a></div>
+					{% endif %}
+				</div>
+			{% endif %}
+
+			<noscript>
+				<div class="alert-message warning">
+					<h4>{{ _('JavaScript required!') }}</h4>
+					<p>{{ _('You must enable JavaScript in your browser or LuCI will not work properly.') }}</p>
+				</div>
+			</noscript>
+
+			<div id="tabmenu" style="display:none"></div>
+		{% endif %}

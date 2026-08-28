@@ -1,0 +1,216 @@
+/* Variables — Afury product surface on LuCI / H5000M names */
+
+@font-face {
+	font-family: "Geist";
+	src: url("fonts/Geist-Regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: "Geist";
+	src: url("fonts/Geist-SemiBold.woff2") format("woff2");
+	font-weight: 500 800;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+	--rect-bg: #FFFFFF;
+	--rect-ink: #000000;
+	--rect-muted: #666666;
+	--rect-accent: #0496D4;
+	--rect-accent2: #0EA5E9;
+	--rect-ok: #248A3D;
+	--rect-danger: #C81E1E;
+	--rect-warn: #E6A817;
+	--rect-line: #EAEAEA;
+	--rect-field: #FFFFFF;
+	--rect-field-line: #EAEAEA;
+	--rect-surface: #FFFFFF;
+	--rect-mast: #000000;
+	--rect-mast-ink: #FFFFFF;
+	--rect-radius-sm: 2px;
+	--rect-radius-md: 2px;
+	--rect-radius-lg: 2px;
+	--rect-elev-1: none;
+	--rect-grid: rgba(0, 0, 0, 0.045);
+	--rect-accent-soft: rgba(0, 0, 0, 0.04);
+	--rect-hover: #F4F4F5;
+	--rect-hover-strong: #E4E4E7;
+	--rect-menu: #FFFFFF;
+	--rect-ok-soft: rgba(36, 138, 61, 0.1);
+	--rect-warn-soft: rgba(230, 168, 23, 0.14);
+	--rect-danger-soft: rgba(200, 30, 30, 0.1);
+
+	--background-color-delta-l-sign: -1;
+	--background-color-h: 0;
+	--background-color-s: 0%;
+	--background-color-l: 100%;
+	--background-color-high-hsl: var(--background-color-h), var(--background-color-s), var(--background-color-l);
+	--background-color-high: #FFFFFF;
+	--background-color-medium-hsl: var(--background-color-h), var(--background-color-s), 98%;
+	--background-color-medium: #FAFAFA;
+	--background-color-low-hsl: var(--background-color-h), var(--background-color-s), 96%;
+	--background-color-low: #F5F5F5;
+
+	--text-color-delta-l-sign: 1;
+	--text-color-h: 0;
+	--text-color-s: 0%;
+	--text-color-l: 0%;
+	--text-color-highest-hsl: 0, 0%, 0%;
+	--text-color-highest: #000000;
+	--text-color-high-hsl: 0, 0%, 0%;
+	--text-color-high: #000000;
+	--text-color-medium-hsl: 0, 0%, 40%;
+	--text-color-medium: #666666;
+	--text-color-low-hsl: 0, 0%, 60%;
+	--text-color-low: #999999;
+	--text-color-secondary: #666666;
+
+	--border-color-delta-l-sign: -1;
+	--border-color-h: 0;
+	--border-color-s: 0%;
+	--border-color-l: 92%;
+	--border-color-high-hsl: 0, 0%, 82%;
+	--border-color-high: #D0D0D0;
+	--border-color-medium-hsl: 0, 0%, 92%;
+	--border-color-medium: #EAEAEA;
+	--border-color-low-hsl: 0, 0%, 96%;
+	--border-color-low: #F5F5F5;
+
+	--primary-color-high: #000000;
+	--primary-color-medium: #171717;
+	--primary-color-low: #333333;
+	--on-primary-color: #FFFFFF;
+
+	--error-color-high-rgb: 200, 30, 30;
+	--error-color-high: #C81E1E;
+	--error-color-medium: #B01B1B;
+	--error-color-low: #8F1616;
+	--on-error-color: #FFFFFF;
+
+	--success-color-high-rgb: 36, 138, 61;
+	--success-color-high: #248A3D;
+	--success-color-medium: #1F7835;
+	--success-color-low: #18602A;
+	--on-success-color: #FFFFFF;
+
+	--warn-color-high: #E6A817;
+	--warn-color-medium: #C99214;
+	--warn-color-low: #A67A10;
+	--on-warn-color: #000000;
+
+	--disabled-opacity: .45;
+	color-scheme: light;
+	--font-sans: "Geist", "PingFang SC", "Microsoft YaHei UI", "Noto Sans SC", ui-sans-serif, sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+	--h5m-radius: var(--rect-radius-lg);
+	--h5m-radius-sm: var(--rect-radius-sm);
+	--h5m-accent: var(--rect-ink);
+	--h5m-ok: #248A3D;
+	--h5m-warn: #E6A817;
+	--h5m-hot: #C81E1E;
+	--h5m-muted: #666666;
+	--h5m-line: #EAEAEA;
+	--h5m-soft: #FAFAFA;
+	--h5m-surface: #FFFFFF;
+}
+
+:root[data-darkmode="true"] {
+	--rect-bg: #000000;
+	--rect-ink: #FFFFFF;
+	--rect-muted: #888888;
+	--rect-accent: #0496D4;
+	--rect-accent2: #35B7EA;
+	--rect-ok: #34C759;
+	--rect-danger: #C81E1E;
+	--rect-warn: #E6A817;
+	--rect-line: #333333;
+	--rect-field: #0A0A0A;
+	--rect-field-line: #404040;
+	--rect-surface: #000000;
+	--rect-elev-1: none;
+	--rect-mast: #000000;
+	--rect-mast-ink: #FFFFFF;
+	--rect-grid: rgba(255, 255, 255, 0.035);
+	--rect-accent-soft: rgba(255, 255, 255, 0.06);
+	--rect-hover: #171717;
+	--rect-hover-strong: #262626;
+	--rect-menu: #0A0A0A;
+	--rect-ok-soft: rgba(52, 199, 89, 0.14);
+	--rect-warn-soft: rgba(230, 168, 23, 0.16);
+	--rect-danger-soft: rgba(200, 30, 30, 0.16);
+
+	--background-color-delta-l-sign: 1;
+	--background-color-h: 0;
+	--background-color-s: 0%;
+	--background-color-l: 0%;
+	--background-color-high-hsl: 0, 0%, 0%;
+	--background-color-high: #000000;
+	--background-color-medium-hsl: 240, 4%, 4%;
+	--background-color-medium: #0A0A0C;
+	--background-color-low-hsl: 240, 5%, 7%;
+	--background-color-low: #111113;
+
+	--text-color-delta-l-sign: -1;
+	--text-color-h: 0;
+	--text-color-s: 0%;
+	--text-color-l: 100%;
+	--text-color-highest-hsl: 0, 0%, 100%;
+	--text-color-highest: #FFFFFF;
+	--text-color-high-hsl: 0, 0%, 100%;
+	--text-color-high: #FFFFFF;
+	--text-color-medium-hsl: 240, 3%, 54%;
+	--text-color-medium: #86868B;
+	--text-color-low-hsl: 240, 3%, 40%;
+	--text-color-low: #636366;
+	--text-color-secondary: #86868B;
+
+	--border-color-delta-l-sign: 1;
+	--border-color-h: 0;
+	--border-color-s: 0%;
+	--border-color-l: 20%;
+	--border-color-high-hsl: 0, 0%, 30%;
+	--border-color-high: #4D4D4D;
+	--border-color-medium-hsl: 0, 0%, 20%;
+	--border-color-medium: #333333;
+	--border-color-low-hsl: 0, 0%, 12%;
+	--border-color-low: #1F1F1F;
+
+	--primary-color-high: #FFFFFF;
+	--primary-color-medium: #EDEDED;
+	--primary-color-low: #CCCCCC;
+	--on-primary-color: #000000;
+
+	--error-color-high-rgb: 200, 30, 30;
+	--error-color-high: #C81E1E;
+	--error-color-medium: #E23A3A;
+	--error-color-low: #8F1616;
+	--on-error-color: #FFFFFF;
+
+	--success-color-high-rgb: 52, 199, 89;
+	--success-color-high: #34C759;
+	--success-color-medium: #2DB04E;
+	--success-color-low: #248A3D;
+	--on-success-color: #000000;
+
+	--warn-color-high: #E6A817;
+	--warn-color-medium: #C99214;
+	--warn-color-low: #A67A10;
+	--on-warn-color: #000000;
+
+	--disabled-opacity: .4;
+	color-scheme: dark;
+
+	--h5m-accent: var(--rect-ink);
+	--h5m-ok: #34C759;
+	--h5m-muted: #888888;
+	--h5m-line: #333333;
+	--h5m-soft: #0A0A0A;
+	--h5m-surface: #000000;
+}

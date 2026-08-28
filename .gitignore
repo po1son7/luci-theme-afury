@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.swp
+.idea/
+.vscode/
+deploy_to_h5000m.py
+
