@@ -457,8 +457,8 @@
 		<link rel="preload" href="{{ media }}/fonts/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin>
 		<link rel="stylesheet" href="{{ media }}/cascade.css">
 		<link rel="stylesheet" href="{{ media }}/tokens.css?v=wm57">
-		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm63">
-		<link rel="stylesheet" media="only screen and (max-width: 854px)" href="{{ media }}/mobile.css?v=wm57">
+		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm66">
+		<link rel="stylesheet" media="only screen and (max-width: 854px)" href="{{ media }}/mobile.css?v=wm58">
 		<link rel="icon" href="{{ media }}/favicon.svg?v=wm2" sizes="any" type="image/svg+xml">
 		<link rel="icon" href="{{ media }}/favicon.svg?v=wm2" sizes="48x48" type="image/svg+xml">
 		{% if (node?.css): %}

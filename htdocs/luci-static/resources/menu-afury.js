@@ -115,6 +115,23 @@ return baseclass.extend({
 		if (activeNode)
 			this.renderTabMenu(activeNode, url + '/' + activeNode.name, (level || 0) + 1);
 
+		ul.querySelectorAll('li.dropdown > a').forEach((anchor) => {
+			anchor.addEventListener('click', (ev) => {
+				const li = ev.currentTarget.parentElement;
+				if (!li || !li.querySelector(':scope > .dropdown-menu'))
+					return;
+				ev.preventDefault();
+				ev.stopPropagation();
+				const open = li.classList.contains('open');
+				ul.querySelectorAll('li.dropdown.open').forEach((node) => {
+					if (node !== li)
+						node.classList.remove('open');
+				});
+				if (!open)
+					li.classList.add('open');
+			});
+		});
+
 		return ul;
 	},
 

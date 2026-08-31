@@ -2132,6 +2132,9 @@ body .modal.login > h4,
 	column-gap: 0;
 	row-gap: 0.35rem;
 	margin-bottom: 0.95rem;
+	padding-bottom: 0;
+	border: none;
+	border-bottom: none;
 }
 
 .modal.login .cbi-value > .cbi-value-field,
@@ -2474,15 +2477,18 @@ img.rect-icon[src*="loading.svg"] {
 .network-status-table .ifacebox-body .ifacebadge {
 	width: 100%;
 	box-sizing: border-box;
-	align-items: flex-start;
+	align-items: center;
 	gap: 0.4rem;
 	padding: 0.65rem 0 0;
 }
 
 .network-status-table .ifacebox-body .ifacebadge img {
-	display: inline-block;
-	flex: 0 0 20px;
-	margin-top: 0.15rem;
+	display: block;
+	flex: 0 0 16px;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+	align-self: center;
 }
 
 .network-status-table .ifacebox-body .ifacebadge > span {
@@ -3559,6 +3565,86 @@ html body .qst-page {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
+	}
+
+	#view > .cbi-section > h3 .label[data-clickable],
+	#maincontent > .cbi-section > h3 .label[data-clickable],
+	#view > .cbi-section > .cbi-title > h3 .label[data-clickable],
+	#maincontent > .cbi-section > .cbi-title > h3 .label[data-clickable] {
+		opacity: 1;
+	}
+
+	#view > .cbi-section,
+	.cbi-map > .cbi-section {
+		overflow: visible;
+	}
+
+	.dropdown.open > .dropdown-menu,
+	.tabs .dropdown.open > .dropdown-menu,
+	.cbi-tabmenu .dropdown.open > .dropdown-menu {
+		display: block !important;
+		left: 0 !important;
+	}
+
+	footer {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 970;
+		margin: 0;
+		max-width: none;
+		padding: 0 10px calc(env(safe-area-inset-bottom, 0px) + 6px);
+		background: var(--rect-bg);
+		border-top: 1px solid var(--rect-line);
+	}
+
+	footer .brand-legal {
+		display: none;
+	}
+
+	footer ul.breadcrumb,
+	#modemenu {
+		display: flex !important;
+		flex-wrap: nowrap;
+		justify-content: space-around;
+		align-items: stretch;
+		width: 100%;
+		margin: 0;
+		padding: 6px 0 2px;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	footer ul.breadcrumb li:not(:last-child)::after {
+		display: none;
+	}
+
+	#modemenu li,
+	footer ul.breadcrumb li {
+		flex: 1 1 auto;
+		text-align: center;
+		margin: 0;
+	}
+
+	#modemenu a,
+	footer ul.breadcrumb a {
+		display: block;
+		padding: 0.55rem 0.35rem;
+		font-size: 13px;
+		font-weight: 650;
+		color: var(--rect-muted);
+		touch-action: manipulation;
+	}
+
+	#modemenu li.active a,
+	footer ul.breadcrumb li.active a {
+		color: var(--rect-ink);
+		box-shadow: inset 0 -2px 0 var(--rect-ink);
+	}
+
+	body:not([data-page*="sysauth"]) {
+		padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
 	}
 }
 
