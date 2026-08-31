@@ -11,7 +11,7 @@ def write(name: str, body: str, disabled: bool = False) -> None:
     (OUT / name).write_text(HEAD + inner + "</svg>\n", encoding="utf-8")
 
 
-ETH = '<rect x="4.5" y="7.5" width="15" height="9" rx="1.6"/><path d="M8 16.5v2.2M16 16.5v2.2M7.2 20.5h9.6"/>'
+ETH = '<rect x="4.5" y="5.5" width="15" height="9" rx="1.6"/><path d="M8 14.5v2.2M16 14.5v2.2M7.2 18.5h9.6"/>'
 BRIDGE = '<rect x="2.5" y="5.5" width="7.5" height="6" rx="1.2"/><rect x="14" y="5.5" width="7.5" height="6" rx="1.2"/><path d="M10 8.5h4M6.2 11.5v3.2h11.6v-3.2"/>'
 WIFI = '<path d="M4.6 9.6a10 10 0 0 1 14.8 0"/><path d="M7.6 12.8a6 6 0 0 1 8.8 0"/><path d="M10.4 16a2.4 2.4 0 0 1 3.2 0"/><circle cx="12" cy="19.1" r="0.85" fill="#111111" stroke="none"/>'
 SWITCH = '<rect x="3" y="6.5" width="18" height="11" rx="2"/><circle cx="8" cy="12" r="1.25"/><circle cx="12" cy="12" r="1.25"/><circle cx="16" cy="12" r="1.25"/>'

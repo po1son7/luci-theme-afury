@@ -367,6 +367,17 @@ body[data-page*="sysauth"] #modal_overlay,
 	pointer-events: auto;
 }
 
+/* 应用配置等提示：遮罩内居中，不要贴到左上角 */
+body.modal-overlay-active #modal_overlay:not(:has(> .modal.login)) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	inset: 0;
+	padding: 1.5rem;
+	box-sizing: border-box;
+}
+
 body.modal-overlay-active #view .cbi-page-actions,
 body.modal-overlay-active #maincontent > .cbi-page-actions {
 	visibility: hidden;
@@ -476,7 +487,6 @@ body.modal-overlay-active #maincontent > .cbi-page-actions {
 
 .h5m-card,
 .wifi-card,
-.fan-col,
 .qst-panel {
 	border: 0;
 	border-top: 1px solid var(--rect-line);
@@ -649,7 +659,7 @@ header [data-indicator][data-style="active"],
 
 .rect-hero {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(4, 1fr);
 	border: 1px solid var(--rect-line);
 	border-radius: var(--rect-radius-lg);
 	overflow: hidden;
@@ -658,7 +668,9 @@ header [data-indicator][data-style="active"],
 }
 
 .rect-hero-item {
-	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	padding: 20px 18px 18px;
 	border-right: 1px solid var(--rect-line);
 	min-width: 0;
 }
@@ -674,22 +686,24 @@ header [data-indicator][data-style="active"],
 }
 
 .rect-hero-n {
-	font-size: 32px;
+	font-size: 28px;
 	font-weight: 650;
 	line-height: 1.05;
 	color: var(--rect-ink);
-	letter-spacing: -0.04em;
+	letter-spacing: 0;
 	font-variant-numeric: tabular-nums;
 }
 
 .rect-hero-s {
 	margin-top: 8px;
+	margin-bottom: 16px;
+	min-height: 1.35em;
 	font-size: 13px;
 	color: var(--rect-muted);
 }
 
 .rect-hero-bar {
-	margin-top: 16px;
+	margin-top: auto;
 	height: 2px;
 	background: var(--rect-line);
 	border-radius: 1px;
@@ -1094,26 +1108,48 @@ table:not(:has(th)):not(:has(.tr > :nth-child(3))) tr:has(> td:first-child + td:
 }
 
 .alert-message.warning {
-	background: transparent !important;
 	border-left-color: var(--rect-warn) !important;
 	color: var(--rect-ink) !important;
 }
 
 .alert-message.error,
 .alert-message.danger {
-	background: transparent !important;
 	border-left-color: var(--rect-danger) !important;
 }
 
 .alert-message.success {
-	background: transparent !important;
 	border-left-color: var(--rect-ok) !important;
 }
 
 .alert-message.info,
 .alert-message.notice {
-	background: transparent !important;
 	border-left-color: var(--rect-ink) !important;
+}
+
+#modal_overlay > .modal.alert-message {
+	background: var(--rect-surface) !important;
+	width: auto;
+	min-width: 18rem;
+	max-width: min(32rem, calc(100vw - 3rem));
+	margin: 0;
+}
+
+#modal_overlay > .modal.alert-message .spinning,
+#modal_overlay > .modal.alert-message > p {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	margin: 0;
+	letter-spacing: 0;
+}
+
+#modal_overlay > .modal.alert-message.spinning::before,
+#modal_overlay > .modal.alert-message .spinning::before {
+	position: static;
+	top: auto;
+	left: auto;
+	margin: 0;
+	flex: 0 0 12px;
 }
 
 /* ----- Controls ----- */
@@ -2408,15 +2444,17 @@ img.rect-icon[src*="loading.svg"] {
 	line-height: 1.35;
 }
 
-.network-status-table .ifacebox-body .ifacebadge {
+.network-status-table .ifacebox-body .ifacebadge,
+[data-page="admin-status-overview"] .network-status-table .ifacebadge,
+[data-page="admin-status-overview"] .ifacebox-body .ifacebadge {
 	min-width: 0;
 	margin: 0.55rem 0 0;
 	padding: 0.65rem 0 0;
-	border: 0;
-	border-top: 1px solid var(--rect-line);
+	border: 0 !important;
+	border-top: 1px solid var(--rect-line) !important;
 	background: transparent !important;
 	background-image: none !important;
-	align-items: flex-start;
+	align-items: center;
 	font-size: 12px;
 	line-height: 1.35;
 }
@@ -2484,29 +2522,70 @@ img.rect-icon[src*="loading.svg"] {
 	padding: 0.4rem 0.45rem 0.5rem;
 }
 
-/* 端口状态小卡：中间是区域色条，hover 才出「网络的一部分」 */
+/* 端口状态：Immortal 用 auto-fit + 1fr，两块会被拉到两端。
+   卡片本身是 width:100px，不是 max-width。 */
+[data-page="admin-status-overview"] .cbi-section div[style*="auto-fit"],
+[data-page="admin-status-overview"] .cbi-section div[style*="minmax(100px"],
 .cbi-section div[style*="minmax(70px"] {
+	display: grid !important;
 	grid-template-columns: repeat(auto-fill, minmax(9rem, 11rem)) !important;
-	justify-content: start;
+	justify-content: start !important;
+	justify-items: stretch !important;
+	align-items: stretch !important;
 	gap: 0.75rem;
+	text-align: center !important;
 }
 
-.ifacebox[style*="max-width"] {
+.ifacebox[style*="max-width"],
+.ifacebox[style*="width:100px"],
+.cbi-section div[style*="minmax(100px"] > .ifacebox,
+.cbi-section div[style*="minmax(70px"] > .ifacebox {
 	max-width: 11rem !important;
-	min-width: 9rem !important;
-	width: 11rem;
+	min-width: 0 !important;
+	width: 100% !important;
 	overflow: visible;
 	text-align: center;
 }
 
-.ifacebox[style*="max-width"] .ifacebox-head:not(.cbi-tooltip-container) {
+.ifacebox[style*="max-width"] .ifacebox-head:not(.cbi-tooltip-container),
+.ifacebox[style*="width:100px"] .ifacebox-head:not(.cbi-tooltip-container),
+.cbi-section div[style*="minmax(100px"] > .ifacebox > .ifacebox-head:not(.cbi-tooltip-container),
+.cbi-section div[style*="minmax(70px"] > .ifacebox > .ifacebox-head:not(.cbi-tooltip-container) {
 	text-align: center;
 	padding: 0.35rem 0.4rem;
 }
 
-.ifacebox[style*="max-width"] .ifacebox-body {
+.ifacebox[style*="max-width"] .ifacebox-body,
+.ifacebox[style*="width:100px"] .ifacebox-body,
+.cbi-section div[style*="minmax(100px"] > .ifacebox > .ifacebox-body,
+.cbi-section div[style*="minmax(70px"] > .ifacebox > .ifacebox-body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	text-align: center;
-	padding: 0.35rem 0.35rem 0.45rem;
+	padding: 0.55rem 0.45rem 0.6rem;
+}
+
+.ifacebox[style*="max-width"] .ifacebox-body img,
+.ifacebox[style*="width:100px"] .ifacebox-body img,
+.cbi-section div[style*="minmax(100px"] > .ifacebox > .ifacebox-body img,
+.cbi-section div[style*="minmax(70px"] > .ifacebox > .ifacebox-body img {
+	display: block;
+	margin: 0 auto 0.35rem;
+	width: 28px;
+	height: 28px;
+}
+
+.ifacebox[style*="max-width"] .ifacebox-body .cbi-tooltip-container,
+.ifacebox[style*="width:100px"] .ifacebox-body .cbi-tooltip-container,
+.cbi-section div[style*="minmax(100px"] > .ifacebox > .ifacebox-body .cbi-tooltip-container,
+.cbi-section div[style*="minmax(70px"] > .ifacebox > .ifacebox-body .cbi-tooltip-container {
+	display: inline-block;
+	width: auto;
+	margin: 0 auto;
+	text-align: left !important;
+	line-height: 1.45;
+	font-variant-numeric: tabular-nums;
 }
 
 .ifacebox .ifacebox-head.cbi-tooltip-container,
@@ -2760,9 +2839,9 @@ textarea#dmesg,
 #maincontent .td[width="33%"],
 #view td[width="33%"],
 #maincontent td[width="33%"] {
-	width: 6rem !important;
-	max-width: 6rem !important;
-	white-space: nowrap;
+	width: 9.5rem !important;
+	max-width: 11rem !important;
+	white-space: normal;
 	padding: 12px 1rem 12px 0;
 	color: var(--rect-muted);
 	font-weight: 400;
@@ -2888,6 +2967,28 @@ textarea#dmesg,
 [data-page*="tailscale"] .cbi-value-field * {
 	writing-mode: horizontal-tb;
 	text-orientation: mixed;
+}
+
+/* 系统 / 管理员：标签贴卡片边，保存区再叠一条顶线 */
+[data-page^="admin-system-admin"] .cbi-section {
+	padding: 1.15rem 1.25rem 1.05rem !important;
+	margin-bottom: 0;
+}
+
+[data-page^="admin-system-admin"] .cbi-section > * {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+[data-page^="admin-system-admin"] .cbi-section .cbi-value:last-child {
+	margin-bottom: 0;
+}
+
+[data-page^="admin-system-admin"] .cbi-page-actions {
+	border-top: 0;
+	margin-top: 0;
+	padding-top: 0.75rem;
+	background: transparent;
 }
 
 [data-page*="system-flash"] .cbi-section:not(:has(.cbi-section)),
@@ -3479,7 +3580,6 @@ select:not([multiple]),
 	background-repeat: no-repeat !important;
 }
 
-.fan-col,
 .wifi-card,
 .wifi-card-2g,
 .wifi-card-5g,
@@ -3489,6 +3589,13 @@ select:not([multiple]),
 	border-top-width: 1px !important;
 	border-top-color: var(--rect-line) !important;
 	border-radius: 2px !important;
+}
+
+html body .fan-page .fan-col {
+	border: 1px solid var(--rect-line) !important;
+	border-radius: 2px !important;
+	padding: 1.1rem 1.15rem 1.25rem !important;
+	background: var(--rect-surface) !important;
 }
 
 .fan-col h3,
@@ -3512,17 +3619,16 @@ select:not([multiple]),
 	color: var(--rect-bg) !important;
 }
 
-.fan-ring {
-	width: 88px !important;
-	height: 88px !important;
-	--ring-color: var(--rect-ink) !important;
+html body .fan-page .fan-ring {
+	width: 96px;
+	height: 96px;
 }
 
-.fan-ring-inner {
-	width: 82px !important;
-	height: 82px !important;
-	background: var(--rect-bg) !important;
-	box-shadow: none !important;
+html body .fan-page .fan-ring-inner {
+	width: 80px;
+	height: 80px;
+	background: var(--rect-surface);
+	box-shadow: none;
 }
 
 .h5m-badge,

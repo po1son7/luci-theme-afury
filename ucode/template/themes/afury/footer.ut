@@ -4,7 +4,7 @@
 			<span class="brand-legal">Afury</span>
 			<ul class="breadcrumb pull-right" id="modemenu" style="display:none"></ul>
 		</footer>
-		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm57">
+		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm63">
 		<script>L.require('menu-afury')</script>
 		{% endif %}
 	</body>

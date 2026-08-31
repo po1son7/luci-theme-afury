@@ -350,7 +350,28 @@
 					s: diskRaw.detail ? ('已用 ' + diskRaw.detail) : '',
 					bar: diskRaw.pct
 				};
-				if (!up && mem.n === '—' && disk.n === '—')
+				var cpuRaw = textOf(cellFor('CPU')) || textOf(cellFor('使用率'));
+				var cpuM = (cpuRaw || '').match(/(\d+)\s*%/);
+				var loadRaw = textOf(cellFor('平均负载')) || textOf(cellFor('Load'));
+				var loadOne = (loadRaw || '').split(',')[0].replace(/\s+/g, ' ').trim();
+				var cpu = {
+					n: cpuM ? cpuM[1] + '%' : '—',
+					s: loadOne ? ('负载 ' + loadOne) : '',
+					bar: cpuM ? parseInt(cpuM[1], 10) : null
+				};
+				function hideRow(label) {
+					for (var hi = 0; hi < cells.length; hi++) {
+						var hkey = (cells[hi].textContent || '').replace(/\s+/g, '');
+						if (hkey.indexOf(label) === -1)
+							continue;
+						var row = cells[hi].closest('.tr, tr');
+						if (row)
+							row.hidden = true;
+						return;
+					}
+				}
+				hideRow('CPU');
+				if (!up && mem.n === '—' && disk.n === '—' && cpu.n === '—')
 					return false;
 				var view = document.querySelector('#view');
 				if (!view)
@@ -360,9 +381,12 @@
 					hero = document.createElement('div');
 					hero.id = 'rect-hero';
 					hero.className = 'rect-hero';
-					hero.innerHTML = '<div class="rect-hero-item"><div class="rect-hero-l">运行时间</div><div class="rect-hero-n" data-k="up"></div><div class="rect-hero-s">设备在线</div></div>' +
-						'<div class="rect-hero-item"><div class="rect-hero-l">内存占用</div><div class="rect-hero-n" data-k="mem"></div><div class="rect-hero-s" data-k="mems"></div><div class="rect-hero-bar" data-k="membar" hidden><i></i></div></div>' +
-						'<div class="rect-hero-item"><div class="rect-hero-l">存储占用</div><div class="rect-hero-n" data-k="disk"></div><div class="rect-hero-s" data-k="disks"></div><div class="rect-hero-bar" data-k="diskbar" hidden><i></i></div></div>';
+				}
+				if (!hero.querySelector('[data-k="cpu"]')) {
+					hero.innerHTML = '<div class="rect-hero-item"><div class="rect-hero-l">运行时间</div><div class="rect-hero-n" data-k="up"></div><div class="rect-hero-s">设备在线</div><div class="rect-hero-bar" data-k="upbar"><i></i></div></div>' +
+						'<div class="rect-hero-item"><div class="rect-hero-l">CPU占用</div><div class="rect-hero-n" data-k="cpu"></div><div class="rect-hero-s" data-k="cpus"></div><div class="rect-hero-bar" data-k="cpubar"><i></i></div></div>' +
+						'<div class="rect-hero-item"><div class="rect-hero-l">内存占用</div><div class="rect-hero-n" data-k="mem"></div><div class="rect-hero-s" data-k="mems"></div><div class="rect-hero-bar" data-k="membar"><i></i></div></div>' +
+						'<div class="rect-hero-item"><div class="rect-hero-l">存储占用</div><div class="rect-hero-n" data-k="disk"></div><div class="rect-hero-s" data-k="disks"></div><div class="rect-hero-bar" data-k="diskbar"><i></i></div></div>';
 					var h2 = document.querySelector('#maincontent > h2, #view > h2');
 					if (h2 && !document.querySelector('.rect-kicker')) {
 						var kicker = document.createElement('p');
@@ -379,18 +403,19 @@
 					var el = hero.querySelector('[data-k="' + key + '"]');
 					if (!el)
 						return;
-					if (pct == null) {
-						el.hidden = true;
-						return;
-					}
 					el.hidden = false;
-					el.querySelector('i').style.width = pct + '%';
+					el.classList.toggle('is-empty', pct == null);
+					el.querySelector('i').style.width = (pct == null ? 0 : pct) + '%';
 				}
 				hero.querySelector('[data-k="up"]').textContent = up || '—';
+				hero.querySelector('[data-k="cpu"]').textContent = cpu.n;
+				hero.querySelector('[data-k="cpus"]').textContent = cpu.s;
 				hero.querySelector('[data-k="mem"]').textContent = mem.n;
 				hero.querySelector('[data-k="mems"]').textContent = mem.s;
 				hero.querySelector('[data-k="disk"]').textContent = disk.n;
 				hero.querySelector('[data-k="disks"]').textContent = disk.s;
+				setBar('upbar', null);
+				setBar('cpubar', cpu.bar);
 				setBar('membar', mem.bar);
 				setBar('diskbar', disk.bar);
 				if (refreshOnly)
@@ -432,7 +457,7 @@
 		<link rel="preload" href="{{ media }}/fonts/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin>
 		<link rel="stylesheet" href="{{ media }}/cascade.css">
 		<link rel="stylesheet" href="{{ media }}/tokens.css?v=wm57">
-		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm57">
+		<link rel="stylesheet" href="{{ media }}/skin.css?v=wm63">
 		<link rel="stylesheet" media="only screen and (max-width: 854px)" href="{{ media }}/mobile.css?v=wm57">
 		<link rel="icon" href="{{ media }}/favicon.svg?v=wm2" sizes="any" type="image/svg+xml">
 		<link rel="icon" href="{{ media }}/favicon.svg?v=wm2" sizes="48x48" type="image/svg+xml">
